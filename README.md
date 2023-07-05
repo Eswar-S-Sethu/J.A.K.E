@@ -31,3 +31,5 @@ Current version features:
 23. take notes
 24. answer FAQs about the voice assistant
 25. Greets the user when booting up. Based on timings and booting-up times, the greetings will be different.
+26. Gives a weather report
+27. Tells you about your events from Google Calendar.
