@@ -3,8 +3,8 @@ The voice assistant in Python
 
 All features:
 
-1.Voice recognition
-2.Face recognition
+1. Voice recognition
+2. Face recognition
 3.Fingerprint recognition
 4.Date and time
 5.Tell about calendar
