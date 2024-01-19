@@ -73,7 +73,7 @@ All features:
 
 This program cannot run on other operating systems and a lot of stuff you see are purely experimental. I will still try to make a Windows executable in the end. 
 
-#System requirements:
+# System requirements:
 1. A Windows PC
 2. Python 3.12 or later
 3. A decent CPU with more than 4 cores.
