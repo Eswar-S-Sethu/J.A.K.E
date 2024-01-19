@@ -7,7 +7,7 @@ All features:
 2. Face recognition
 3. Fingerprint recognition
 4. Date and time
-5. Tell about calendar
+5. Tell about the calendar
 6. Keep reminders
 7. Make calls from a number 
 8. Do a Google search
@@ -16,7 +16,7 @@ All features:
 11. Schedule your day based on your needs
 12. Reminds you about events
 13. Take notes 
-14. Take print outs
+14. Take printouts
 15. Read news from your favorite news agency
 16. greets you during every boot-up 
 17. Asks you random questions when idle for more than an hour this can be turned off
@@ -31,7 +31,7 @@ All features:
 26. Can take a screenshot and pictures using the camera
 27. Can use Spotify to play songs
 28. Can identify personalities 
-29. Can do a youtube search
+29. Can do a YouTube search
 30. Can tell everything about the computer
 31. Offline speech recognition
 32. always on feature
@@ -56,7 +56,7 @@ All features:
 51. It likes meeting new people who are friends of the user and requests them to stand in front of the camera.
 52. Can get useful info from Wikipedia
 53. Start recording voice when requested
-54. Can recognize hand gestures for increase, decrease, turn off JAKE, and disable voice response and to this it will respond with emojis.
+54. Can recognize hand gestures for increase, decrease, turn off JAKE, and disable voice response, and to this, it will respond with emojis.
 55. find your phone 
 56. Can help write an assignment or anything like an article.
 57. Can tell weather info
@@ -71,6 +71,12 @@ All features:
 66. Dall E integration ( if possible )
 67. Can do morse and binary conversions
 
+This program cannot run on other operating systems and a lot of stuff you see are purely experimental. I will still try to make a Windows executable in the end. 
+
+*System requirements:
+1. A Windows PC
+2. Python 3.12 or later
+3. A decent CPU with more than 4 cores.
 
 
 
