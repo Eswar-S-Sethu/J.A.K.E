@@ -69,6 +69,7 @@ All features:
 64. Can run source code and explain it ( uses chatGPT and other APIs )
 65. There are two ways it will get answers: one is by telling it to get answers from Google and another one is chatgpt. The default is chatgpt.
 66. Dall E integration ( if possible )
+67. Can do morse and binary conversions
 
 
 
