@@ -31,7 +31,7 @@ def textToBinary():
 def binaryToText():
     # working on it
     pass
-def getDateAndTime():
+def getDateAndTime(timeOnly):
     # working on it
     pass
 def setReminder():
@@ -58,28 +58,34 @@ def adjustSystemVolume(adjustValue):
 def greetingOnBootup():
     # working on it
     pass
-def speechRecognition():
-    # working on it
-    pass
 def doYTsearch(query):
     # working on it
     pass
 def moderationSystem():
     # working on it
     pass
+def contextAnalyser(sentence):
+    # this function analyses the context of a sentence and takes appropriate action
+    sentence.lower()
+    if "time" and "now" and "what" in sentence:
+        res=getDateAndTime(timeOnly=True)
+        speaker.Speak(res)
+    elif "date" and "today" and "what" in sentence:
+        res=getDateAndTime(timeOnly=False)
+        speaker.Speak(res)
+    elif "do" and "google search" in sentence:
+        # continue from here
+        res=doAGoogleSearch(sentence)
+    pass
 def main():
     if voice_check(speaker, desired_voice):
         print(f"Voice set to: {desired_voice}")
-        message_to_speak = "Hi, I am JAKE, a one of a kind voice assistant with some brains. My name sounds like a guy's name but it has a meaning just like edith and jarvis in the marvel universe"
-        #speaker.Speak(message_to_speak)
-    else:
-        print(f"Voice '{desired_voice}' not found.")
 
     print("Going to listen to your voice now...")
 
 
     with sr.Microphone() as source:
-        sp_recognizer.adjust_for_ambient_noise(source)
+        sp_recognizer.adjust_for_ambient_noise(source,duration=1)
         print("Say something..")
         audio_data=sp_recognizer.listen(source)
     try:
