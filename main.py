@@ -1,10 +1,12 @@
 import win32com.client
 import speech_recognition as sr
-import os,sys,vosk
+import os,sys
 
 speaker = win32com.client.Dispatch("SAPI.SpVoice")
 sp_recognizer=sr.Recognizer()
 desired_voice = "Microsoft Eva - English (United States)"
+followup=False
+
 
 def voice_check(speaker, desired_voice):
     for voice in speaker.GetVoices():
@@ -23,6 +25,9 @@ def textToMorseCode():
     # working on it
     pass
 def morseCodeToText():
+    # working on it
+    pass
+def searchAFile():
     # working on it
     pass
 def textToBinary():
@@ -56,7 +61,7 @@ def adjustSystemVolume(adjustValue):
     # working on it
     pass
 def greetingOnBootup():
-    # working on it
+    res=getDateAndTime(timeOnly=True)
     pass
 def doYTsearch(query):
     # working on it
@@ -65,7 +70,9 @@ def moderationSystem():
     # working on it
     pass
 def contextAnalyser(sentence):
-    # this function analyses the context of a sentence and takes appropriate action
+    # this function analyses the context of a sentence and takes appropriate action and action here means it runs a specific function
+    volume_adjust_value=0
+    digit=""
     sentence.lower()
     if "time" and "now" and "what" in sentence:
         res=getDateAndTime(timeOnly=True)
@@ -74,12 +81,72 @@ def contextAnalyser(sentence):
         res=getDateAndTime(timeOnly=False)
         speaker.Speak(res)
     elif "do" and "google search" in sentence:
-        # continue from here
+        sentence=sentence.replace('google search','')
         res=doAGoogleSearch(sentence)
+        speaker.Speak(res)
+    elif "youtube" and "search" in sentence:
+        sentence=sentence.replace('youtube search','')
+        doAGoogleSearch(sentence)
+        speaker.Speak("result will open in youtube")
+    elif "news" and "today" in sentence:
+        getNews()
+    elif "increase volume" in sentence:
+        volume_adjust_value=volume_adjust_value+20
+        adjustSystemVolume(volume_adjust_value)
+        speaker.Speak("i increased the speaker volume")
+        followup=True
+    elif "decrease volume" in sentence:
+        volume_adjust_value=volume_adjust_value-20
+        adjustSystemVolume(volume_adjust_value)
+        speaker.Speak("i decreased the speaker volume")
+        followup=True
+    elif "adjust volume" and "percent" in sentence:
+        for i in sentence:
+            if i.isDigit():
+                digit=digit+""+i
+        int(digit)
+        adjustSystemVolume(digit)
+        speaker.Speak("adjusted the volume by "+digit+" percent")
+    elif "increase screen brightness" in sentence:
+        volume_adjust_value=volume_adjust_value+20
+        adjustScreenBrightness(volume_adjust_value)
+        speaker.Speak("increased screen brightness")
+    elif "decreased screen brightness" in sentence:
+        volume_adjust_value=volume_adjust_value-20
+        adjustScreenBrightness(volume_adjust_value)
+        speaker.Speak("decreased screen brightness")
+    elif "adjust brightness" and "percent" in sentence:
+        for j in sentence:
+            if j.isDigit():
+                digit=digit+""+j
+        int(digit)
+        adjustScreenBrightness(digit)
+        speaker.Speak("adjusted the brightness by "+digit+" percent")
+
     pass
+
+class Automations(automations=False):
+    # JAKE will adjust screen brightness and volume automatically after checking the ambient sound and light.
+    # it will tell you when it does this. this action can be reversed.
+    # JAKE will tell you when it's time to sleep, drink water, eat food, workout and other day-to-day activities
+    # working on it
+    def screen_brightness_adjustment(self):
+        pass
+    def speaker_volume_adjustment(self):
+        pass
+    def water_reminder(self):
+        pass
+    def food_reminder(self):
+        pass
+    def workout_reminder(self):
+        pass
+    def sleep_check(self):
+        pass
+
 def main():
     if voice_check(speaker, desired_voice):
         print(f"Voice set to: {desired_voice}")
+    greetingOnBootup()
 
     print("Going to listen to your voice now...")
 
