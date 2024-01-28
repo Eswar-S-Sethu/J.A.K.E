@@ -9,6 +9,7 @@ from screen_brightness_control import set_brightness
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+from datetime import datetime,timezone
 
 speaker = win32com.client.Dispatch("SAPI.SpVoice")
 sp_recognizer=sr.Recognizer()
@@ -26,16 +27,12 @@ def voice_check(speaker, desired_voice):
 def recognize_speech_with_whisper(audio_data):
     result=sp_recognizer.recognize_whisper(audio_data,model="small",language='en')
     return result
-def passwordCracker():
+def passwordCracker(): # need to work more on it
     chars = string.printable
 
     # Define the password to be cracked
     password = "echu" # make a guess based on the minimum length of passwords
-
-    # Define the maximum password length to try
     max_length = len(password)
-
-    # Track the start time of the password cracking process
     start_time = time.time()
 
     # Try all possible combinations of characters up to max_length
@@ -63,10 +60,10 @@ def textToMorseCodeAndBack():
                 "1":".____","2":"..___","3":"...__","4":"...._",
                 "5":".....","6":"_....","7":"__...","8":"___..","0":"_____",
                 "?":"..__..","!":"_._.__"}
-    pass
-def searchAFile():
-    # working on it
-    pass
+def searchAFile(name,path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
 def binaryToTextAndBack():
     binary_text={"A":"01000001","B":"01000010","C":"01000011","D":"01000100","E":"01000101","F":"01000110",
                  "G":"01000111","H":"01001000","I":"01001001","J":"01001010","K":"01001011","L":"01001100",
@@ -77,14 +74,26 @@ def binaryToTextAndBack():
                  "j":"01101010","k":"01101011","l":"01101100","m":"01101101","n":"01101110","o":"01101111",
                  "p":"01110000","q":"01110001","r":"01110010","s":"01110011","t":"01110100","u":"01110101",
                  "v":"01110110","w":"01110111","x":"01111000","y":"01111001","z":"01111010"}
-    pass
-def getDateAndTime(timeOnly):
-    # working on it
-    pass
+def getDateAndTime(timeOnly,singleDigit=False):
+    if timeOnly:
+        getDateTime = datetime.now(timezone.utc)
+        the_time=getDateTime.strftime("%I:%M %p")
+        return the_time
+    elif timeOnly==False:
+        the_date=datetime.now().strftime("%d %B, %Y, %A")
+        return the_date
+    elif timeOnly==True and singleDigit==True:
+        getTime=datetime.now(timezone.utc)
+        the_time_num=getTime.strftime("%H")
+        return the_time_num
 def setReminder():
     # working on it
     pass
 def doAGoogleSearch(query):
+    pywht.search(query)
+    speaker.Speak("found this one on google")
+
+def doAWikiSearch(query):
     # working on it
     pass
 def takeANote(query):
@@ -106,8 +115,15 @@ def adjustSystemVolume(adjustValue):
     # Set the volume (0.0 to 1.0)
     volume_object.SetMasterVolumeLevelScalar(adjustValue, None)
 def greetingOnBootup():
-    res=getDateAndTime(timeOnly=True)
-    pass
+    res=int(getDateAndTime(timeOnly=True,singleDigit=True))
+    if (res>=0 or res>=00) and res<12:
+        speaker.Speak("Good morning")
+    elif res>=12 and res<=15:
+        speaker.Speak("Good afternoon")
+    elif res>15 and res<=21:
+        speaker.Speak("Good evening")
+    else:
+        speaker.Speak("Good night")
 def doYTsearch(query):
     pywht.playonyt(query)
 def moderationSystem():
@@ -126,8 +142,7 @@ def contextAnalyser(sentence):
         speaker.Speak(res)
     elif "do" and "google search" in sentence:
         sentence=sentence.replace('google search','')
-        res=doAGoogleSearch(sentence)
-        speaker.Speak(res)
+        doAGoogleSearch(sentence)
     elif "youtube" and "search" in sentence:
         sentence=sentence.replace('youtube search','')
         doAGoogleSearch(sentence)
@@ -136,11 +151,15 @@ def contextAnalyser(sentence):
         getNews()
     elif "increase volume" in sentence:
         volume_adjust_value=volume_adjust_value+20
+        float(volume_adjust_value)
+        volume_adjust_value=volume_adjust_value/10
         adjustSystemVolume(volume_adjust_value)
         speaker.Speak("i increased the speaker volume")
         followup=True
     elif "decrease volume" in sentence:
         volume_adjust_value=volume_adjust_value-20
+        float(volume_adjust_value)
+        volume_adjust_value=volume_adjust_value/10
         adjustSystemVolume(volume_adjust_value)
         speaker.Speak("i decreased the speaker volume")
         followup=True
@@ -148,7 +167,8 @@ def contextAnalyser(sentence):
         for i in sentence:
             if i.isDigit():
                 digit=digit+""+i
-        int(digit)
+        float(digit)
+        digit=digit/10.0
         adjustSystemVolume(digit)
         speaker.Speak("adjusted the volume by "+digit+" percent")
     elif "increase screen brightness" in sentence:
