@@ -16,7 +16,6 @@ pywin32
 openai
 openweather
 twilio
-geolocation-python
 mouse
 keyboard
 pyautogui
@@ -24,8 +23,11 @@ shazamio
 newspaper3k
 pathlib
 aspose-words
-whapi
+whapi # whatsapp api
 schedule
 pyjokes
 spotipy
 pygame
+pywikihow
+geopy
+geocoder

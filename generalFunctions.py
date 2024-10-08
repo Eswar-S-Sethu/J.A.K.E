@@ -1,31 +1,36 @@
 # all general functions which any voice assistant can do will be here.
 # Author : Eswar Sivan Sethu
-'''These are the things which any voice assistant can do like - telling the time and date, keeping
+'''These are the things which any voice assistant can do like - telling the time and date-done, keeping
     reminders, accessing the calendar data and letting user know about the events, making a phone
-    call, doing a Google search, opening a webpage, opening a YT video, recognizing a song,
+    call, doing a Google search-done, opening a webpage, opening a YT video-done, recognizing a song-done,
     key logging, face and object recognition, file format conversions, scheduling your day, getting the
-    news, taking notes, taking printouts, controlling brightness and audio, playing a song, random
-    questions, getting jokes from the internet, automating keyboard shortcuts, controlling Wi-Fi and
+    news, taking notes, taking printouts, controlling brightness and audio-done, playing a song, getting jokes from the internet-done,
+    automating keyboard shortcuts, controlling Wi-Fi and
     bluetooth, opening and closing apps, taking screenshots, recording sound, setting alarms and timers,
-    mini-games, getting weather info, getting info from wikipedia, cracking a password, calculator,
-    wikiHow integration, morse and binary conversions, language translations'''
+    mini-games, getting weather info, getting info from wikipedia-done, cracking a password-done, calculator,
+    wikiHow integration, morse and binary conversions- almost done, language translations'''
 
 import wikipedia
-import os,sys
+import os,sys,json
 import string,time
 import pywhatkit as pywht
 from screen_brightness_control import set_brightness
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
-from datetime import datetime,timezone
+from datetime import datetime,timezone,date
 import newspaper as newspr
-import itertools,pyjokes,asyncio,keyboard,folium
+import itertools,pyjokes,asyncio,keyboard,folium,requests,geocoder
+import pyautogui
+from geopy.geocoders import Nominatim
 from shazamio import Shazam
 import pygame
 import spotipy
+from pywikihow import RandomHowTo,WikiHow,search_wikihow
 
 shazam=Shazam()
+geolocator = Nominatim(user_agent="geoapiExercises")
+
 newsList={"AU":["https://www.news.com.au/","https://www.9news.com.au/","https://www.abc.net.au/news/australia"],
           "IN":["https://timesofindia.indiatimes.com/","https://www.thehindu.com/news/national/","https://www.indiatoday.in/"],
           "GLOBAL":["https://www.indiatoday.in/","https://www.reuters.com/world/","https://www.bbc.com/"],
@@ -47,8 +52,73 @@ class General:
     def get_news(self,topgoogletrends=False,today=True,sportsnewsonly=False,currentCountry=False):
         pass
 
-    def take_new_note(self,note):
-        pass
+    def takeNote(self,note):
+        now = datetime.now()
+        dt_string = now.strftime("%H:%M")
+
+        dictionary = {
+            "Date": str(date.today()),
+            "Time": str(dt_string),
+            "Content": note,
+        }
+
+        # Serializing json
+        json_object = json.dumps(dictionary, indent=3)
+
+        # Writing to sample.json
+        with open("usernotes.json", "a") as outfile:
+            outfile.write(json_object)
+
+        return
+
+
+
+    def takeAScreenShot(self):
+        im1 = pyautogui.screenshot()
+        im1.save(r"C:\Users\Eswar\PycharmProjects\J.A.K.E\temp\screenshot.png")
+        return
+
+    def getCurrentLocation(self):
+        g = geocoder.ip('me')  # this function is used to find the current information using our IP Add
+        latitude, longitude = g.latlng
+        print(latitude)
+        print(longitude)
+
+        location = geolocator.reverse([latitude, longitude])
+
+        address = location.raw['address']
+
+        # traverse the data
+        city = address.get('city', '')
+        state = address.get('state', '')
+        country = address.get('country', '')
+        code = address.get('country_code')
+        zipcode = address.get('postcode')
+
+        return city
+
+
+    def getWeatherInfo(self):
+        city = self.getCurrentLocation()
+
+        url = 'http://api.openweathermap.org/data/2.5/weather?q={}&appid={Enter your API key here}&units=metric'.format(
+            city)
+
+        res = requests.get(url)
+        data = res.json()
+
+        humidity = data['main']['humidity']
+        pressure = data['main']['pressure']
+        wind = data['wind']['speed']
+        description = data['weather'][0]['description']
+        temp = data['main']['temp']
+
+        temp="Temperature: "+temp+"°C"
+        wind="Wind: "+wind
+        pressure="Pressure: "+pressure
+        humidity="Humidity: "+humidity
+
+        return (temp,wind,pressure,humidity,description)
 
     def dial_a_number(self):
         pass
@@ -57,40 +127,59 @@ class General:
         pass
 
     def get_a_joke(self):
-        pass
+        My_joke = pyjokes.get_joke(language="en", category="all")
+        return My_joke
 
     def textToMorseCodeAndBack(inputValue):
 
-        # in tests.py - working on it
+        # still needs work - come back later
+        morse_code_list = ["._", "_...", "_._.", "_..", ".", ".._.", "__.", "....", "..", ".___", "_._", "_..", "__",
+                           "_.", "___",
+                           ".__.", "__._", "._.", "...", "_", ".._", "..._", ".__", "_.._", "_.__", "__..", ".____",
+                           "..___", "...__",
+                           "...._", ".....", "_....", "__...", "___..", "____.", "_____", "..__..", "_._.__"]
+        letters_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
+                        "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
+                        "?", "!"]
 
-        morse_code = {"A": "._", "B": "_...", "C": "_._.", "D": "_..", "E": ".",
-                      "F": ".._.", "G": "__.", "H": "....", "I": "..", "J": ".___",
-                      "K": "_._", "L": "_..", "M": "__", "N": "_.", "O": "___",
-                      "P": ".__.", "Q": "__._", "R": "._.", "S": "...", "T": "_",
-                      "U": ".._", "W": ".__", "X": "_.._", "Y": "_.__", "Z": "__..",
-                      "1": ".____", "2": "..___", "3": "...__", "4": "...._",
-                      "5": ".....", "6": "_....", "7": "__...", "8": "___..", "0": "_____",
-                      "?": "..__..", "!": "_._.__"}
+        morse = None
+        flag = 0
 
-        morse=None
-        flag=0
+        for i in inputValue:
+            if i == "." or i == "_":
+                flag += 1
+            elif i.isalpha():
+                flag -= 1
 
-        for i in len(inputValue):
-            if i=="." or i=="_":
-                flag+=1
-            else:
-                pass
+        if flag > 1:
+            morse = True
+        elif flag < -1:
+            morse = False
+        elif flag == 0:
+            morse = False
 
-        if flag==len(inputValue):
-            morse=True
+        inputValue = inputValue.upper()
+        converted = ""
 
-        # convert morse to text
-        if morse:
-            pass
+        # convert text to morse
+        if not morse:
+            for j in inputValue:
+                for a in range(len(letters_list)):
+                    if j == letters_list[a]:
+                        converted = converted + morse_code_list[a] + " "
 
+        elif morse:
+            inputValue = inputValue.split()
+            for k in inputValue:
+                for b in range(len(morse_code_list)):
+                    if k == morse_code_list[b]:
+                        converted = converted + letters_list[b]
 
+        return converted
 
     def binaryToTextAndBack(textOrBinary):
+
+        # probably needs work as i never tested it
         if set(textOrBinary).issubset({'0', '1'}):
             textOrBinary = textOrBinary[:len(textOrBinary) - (len(textOrBinary) % 8)]
 
@@ -164,6 +253,17 @@ class General:
 
     def doYTsearch(query):
         pywht.playonyt(query)
+
+    def wikiHowRandom(self):
+        how_to = RandomHowTo()
+        return how_to.print() # a string value
+
+    def wikiHowSpecific(self,query):
+        max_results = 1  # default for optional argument is 10
+        how_tos = search_wikihow(query, max_results)
+        assert len(how_tos) == 1
+        return how_tos[0].print()
+
 
 
 class FormatFactory:

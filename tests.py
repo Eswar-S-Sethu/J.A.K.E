@@ -1,12 +1,10 @@
 def textToMorseCodeAndBack(inputValue):
-    morse_code = {"A": "._", "B": "_...", "C": "_._.", "D": "_..", "E": ".",
-                  "F": ".._.", "G": "__.", "H": "....", "I": "..", "J": ".___",
-                  "K": "_._", "L": "_..", "M": "__", "N": "_.", "O": "___",
-                  "P": ".__.", "Q": "__._", "R": "._.", "S": "...", "T": "_",
-                  "U": ".._", "W": ".__", "X": "_.._", "Y": "_.__", "Z": "__..",
-                  "1": ".____", "2": "..___", "3": "...__", "4": "...._",
-                  "5": ".....", "6": "_....", "7": "__...", "8": "___..", "0": "_____",
-                  "?": "..__..", "!": "_._.__"}
+    morse_code_list = ["._","_...","_._.","_..", ".",".._.","__.","....","..",".___","_._","_..","__","_.","___",
+                       ".__.","__._","._.","...","_",".._","..._",".__","_.._","_.__","__..",".____","..___","...__",
+                       "...._",".....","_....","__...","___..","____.","_____","..__..","_._.__"]
+    letters_list=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R",
+                  "S","T","U","V","W","X","Y","Z","1","2","3","4","5","6","7","8","9","0",
+                  "?","!"]
 
     morse = None
     flag = 0
@@ -18,32 +16,31 @@ def textToMorseCodeAndBack(inputValue):
             flag-=1
 
     if flag>1:
-        print("this is a morse code")
         morse=True
     elif flag<-1:
-        print("this is a text")
         morse=False
     elif flag==0:
-        print("contains text and morse symbols")
         morse=False
 
     inputValue=inputValue.upper()
-    print(inputValue)
     converted=""
 
     # convert text to morse
     if not morse:
         for j in inputValue:
-            for key,value in morse_code.items():
-                if j==key:
-                    converted=converted+morse_code[key]+" "
-    elif morse: # work on this part.
-        for v in inputValue:
-            for letter,morseval in morse_code.items():
-                if v==morse_code[letter]:
-                    converted=converted+letter
+            for a in range(len(letters_list)):
+                if j==letters_list[a]:
+                    converted=converted+morse_code_list[a]+" "
+
+    elif morse:
+        inputValue=inputValue.split()
+        for k in inputValue:
+            for b in range(len(morse_code_list)):
+                if k==morse_code_list[b]:
+                    converted=converted+letters_list[b]
+
 
 
     return converted
 
-print(textToMorseCodeAndBack(". ... .__ ._ ._."))
+print(textToMorseCodeAndBack(".. .__ ._ _. _ _ ___ __ . . _ .___ . ... ... .. . ._ __. ._ .. _. ._ ... ... .... . .. ... . _.._ ._ _._. _ _.. _.__ _ .... . _._ .. _. _.. ___ .._. .__. . ._. ... ___ _. .. ._ __ _.. ___ ___ _._ .. _. __. .._. ___ ._. "))
