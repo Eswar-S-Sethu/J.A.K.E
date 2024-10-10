@@ -15,7 +15,7 @@ ffmpeg
 pywin32
 openai
 openweather
-twilio
+sinch
 mouse
 keyboard
 pyautogui
@@ -23,7 +23,6 @@ shazamio
 newspaper3k
 pathlib
 aspose-words
-whapi # whatsapp api
 schedule
 pyjokes
 spotipy

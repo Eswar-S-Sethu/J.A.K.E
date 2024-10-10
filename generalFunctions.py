@@ -20,16 +20,17 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from datetime import datetime,timezone,date
 import newspaper as newspr
-import itertools,pyjokes,asyncio,keyboard,folium,requests,geocoder
+import itertools,pyjokes,asyncio,keyboard,folium,requests,geocoder,nltk
 import pyautogui
+import aspose.words as aw
 from geopy.geocoders import Nominatim
 from shazamio import Shazam
+import tkinter as tk
 import pygame
 import spotipy
-from pywikihow import RandomHowTo,WikiHow,search_wikihow
+from pywikihow import RandomHowTo,search_wikihow
+from sinch import SinchClient
 
-shazam=Shazam()
-geolocator = Nominatim(user_agent="geoapiExercises")
 
 newsList={"AU":["https://www.news.com.au/","https://www.9news.com.au/","https://www.abc.net.au/news/australia"],
           "IN":["https://timesofindia.indiatimes.com/","https://www.thehindu.com/news/national/","https://www.indiatoday.in/"],
@@ -39,11 +40,14 @@ newsList={"AU":["https://www.news.com.au/","https://www.9news.com.au/","https://
 
 class General:
     def __init__(self):
-        pass
+        self.shazam = Shazam()
+        self.geolocator = Nominatim(user_agent="geoapi")
+        self.sinch_client = SinchClient(application_key=os.getenv("APPLICATION_KEY"),
+                                        application_secret=os.getenv("APPLICATION_SECRET"))
 
     def song_identification(self, song=None):
         async def recognise_song(song):
-            song=await shazam.recognize_song(song)
+            song=await self.shazam.recognize_song(song)
             if song.get('track') != None:
                 print(song['track']['title'] + '\t' + song['track']['subtitle'])
 
@@ -84,7 +88,7 @@ class General:
         print(latitude)
         print(longitude)
 
-        location = geolocator.reverse([latitude, longitude])
+        location = self.geolocator.reverse([latitude, longitude])
 
         address = location.raw['address']
 
@@ -120,8 +124,15 @@ class General:
 
         return (temp,wind,pressure,humidity,description)
 
-    def dial_a_number(self):
-        pass
+    def dial_a_number(self,phonenumber):
+        response = self.sinch_client.voice.callouts.text_to_speech(
+            destination={
+                "type": "number",
+                "endpoint": phonenumber
+            },
+            text="")
+
+        return response
 
     def play_song(self,songname):
         pass
@@ -178,7 +189,7 @@ class General:
         return converted
 
     def binaryToTextAndBack(textOrBinary):
-
+        # needs to work on it
         # probably needs work as i never tested it
         if set(textOrBinary).issubset({'0', '1'}):
             textOrBinary = textOrBinary[:len(textOrBinary) - (len(textOrBinary) % 8)]
@@ -264,14 +275,167 @@ class General:
         assert len(how_tos) == 1
         return how_tos[0].print()
 
+    def openAWindow(self,dimensionX,dimensionY):
+        window=tk.Tk()
+        window.title("Info Screen")
+        window.geometry(dimensionX+"x"+dimensionY)
+        window.mainloop()
 
 
 class FormatFactory:
-
+    # need to work on this further
     # to convert files to various file formats
+    def __init__(self,filepath,filename):
+        self.filepath=filepath
+        self.filename=filename
 
-    def __init__(self):
-        pass
+    def ToDocx(self):
+        file=self.filepath+self.filename
+        doc = aw.Document(file)
+        doc.save("Output.docx")
+
+    def ToPDF(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.pdf")
+
+    def ToMD(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.md")
+
+    def ToTxt(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.txt")
+
+    def ToDoc(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.doc")
+
+    def ToDot(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.dot")
+
+    def ToDocm(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.docm")
+
+    def ToDotx(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.dotx")
+
+    def ToDotm(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.dotm")
+
+    def ToRTF(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.rtf")
+
+    def ToEPUB(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.epub")
+
+    def ToPS(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.ps")
+
+    def ToPCL(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.pcl")
+
+    def ToMhtml(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.mhtml")
+
+    def ToXHtml(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.xhtml")
+
+    def ToOdt(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.odt")
+
+    def ToOtt(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.ott")
+
+    def Toxps(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+        doc.save("Output.xps")
+
+    def ToPng(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+
+        for page in range(0, doc.page_count):
+            extractedPage = doc.extract_pages(page, 1)
+            extractedPage.save(f"Output_{page + 1}.png")
+
+
+    def Tobmp(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+
+        for page in range(0, doc.page_count):
+            extractedPage = doc.extract_pages(page, 1)
+            extractedPage.save(f"Output_{page + 1}.bmp")
+
+    def Toemf(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+
+        for page in range(0, doc.page_count):
+            extractedPage = doc.extract_pages(page, 1)
+            extractedPage.save(f"Output_{page + 1}.emf")
+
+    def Togif(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+
+        for page in range(0, doc.page_count):
+            extractedPage = doc.extract_pages(page, 1)
+            extractedPage.save(f"Output_{page + 1}.gif")
+
+    def Tosvg(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+
+        for page in range(0, doc.page_count):
+            extractedPage = doc.extract_pages(page, 1)
+            extractedPage.save(f"Output_{page + 1}.svg")
+
+    def Totiff(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+
+        for page in range(0, doc.page_count):
+            extractedPage = doc.extract_pages(page, 1)
+            extractedPage.save(f"Output_{page + 1}.tiff")
+
+    def ToJpg(self):
+        file = self.filepath + self.filename
+        doc = aw.Document(file)
+
+        for page in range(0, doc.page_count):
+            extractedPage = doc.extract_pages(page, 1)
+            extractedPage.save(f"Output_{page + 1}.jpg")
+
 
 
 class KeyLogger:
@@ -313,3 +477,5 @@ class KeyLogger:
             # write the keylogs to the file
             print(self.log, file=f)
         print(f"[+] Saved {self.filename}.txt")
+
+
