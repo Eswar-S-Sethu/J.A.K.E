@@ -26,10 +26,11 @@ import aspose.words as aw
 from geopy.geocoders import Nominatim
 from shazamio import Shazam
 import tkinter as tk
-import pygame
+import pygame,serial
 import spotipy
 from pywikihow import RandomHowTo,search_wikihow
 from sinch import SinchClient
+from dotenv import load_dotenv
 
 
 newsList={"AU":["https://www.news.com.au/","https://www.9news.com.au/","https://www.abc.net.au/news/australia"],
@@ -40,10 +41,14 @@ newsList={"AU":["https://www.news.com.au/","https://www.9news.com.au/","https://
 
 class General:
     def __init__(self):
+        load_dotenv()
         self.shazam = Shazam()
         self.geolocator = Nominatim(user_agent="geoapi")
-        self.sinch_client = SinchClient(application_key=os.getenv("APPLICATION_KEY"),
-                                        application_secret=os.getenv("APPLICATION_SECRET"))
+        self.sinchAppkey=os.getenv("SINCH_APPLICATION_KEY")
+        self.sinchAppSecret=os.getenv("SINCH_APPLICATION_SECRET")
+        self.openweatherAPIKey=os.getenv("OPENWEATHER_API_KEY")
+        self.sinch_client = SinchClient(application_key=os.getenv(self.sinchAppkey),
+                                        application_secret=os.getenv(self.sinchAppSecret))
 
     def song_identification(self, song=None):
         async def recognise_song(song):
@@ -105,8 +110,8 @@ class General:
     def getWeatherInfo(self):
         city = self.getCurrentLocation()
 
-        url = 'http://api.openweathermap.org/data/2.5/weather?q={}&appid={Enter your API key here}&units=metric'.format(
-            city)
+        url = 'http://api.openweathermap.org/data/2.5/weather?q={}&appid={}&units=metric'.format(
+            city,self.openweatherAPIKey)
 
         res = requests.get(url)
         data = res.json()
@@ -124,7 +129,8 @@ class General:
 
         return (temp,wind,pressure,humidity,description)
 
-    def dial_a_number(self,phonenumber):
+    def dialNumberOnline(self,phonenumber):
+        # uses internet for making the phone call
         response = self.sinch_client.voice.callouts.text_to_speech(
             destination={
                 "type": "number",
@@ -281,201 +287,224 @@ class General:
         window.geometry(dimensionX+"x"+dimensionY)
         window.mainloop()
 
+    class FormatFactory:
+        # need to work on this further
+        # to convert files to various file formats
+        def __init__(self, filepath, filename):
+            self.filepath = filepath
+            self.filename = filename
 
-class FormatFactory:
-    # need to work on this further
-    # to convert files to various file formats
-    def __init__(self,filepath,filename):
-        self.filepath=filepath
-        self.filename=filename
+        def ToDOCX(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.docx")
 
-    def ToDocx(self):
-        file=self.filepath+self.filename
-        doc = aw.Document(file)
-        doc.save("Output.docx")
+        def ToPDF(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.pdf")
 
-    def ToPDF(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.pdf")
+        def ToMD(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.md")
 
-    def ToMD(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.md")
+        def ToTXT(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.txt")
 
-    def ToTxt(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.txt")
+        def ToDOC(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.doc")
 
-    def ToDoc(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.doc")
+        def ToDOT(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.dot")
 
-    def ToDot(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.dot")
+        def ToDOCM(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.docm")
 
-    def ToDocm(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.docm")
+        def ToDOTX(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.dotx")
 
-    def ToDotx(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.dotx")
+        def ToDOTM(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.dotm")
 
-    def ToDotm(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.dotm")
+        def ToRTF(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.rtf")
 
-    def ToRTF(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.rtf")
+        def ToEPUB(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.epub")
 
-    def ToEPUB(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.epub")
+        def ToPS(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.ps")
 
-    def ToPS(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.ps")
+        def ToPCL(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.pcl")
 
-    def ToPCL(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.pcl")
+        def ToMHTML(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.mhtml")
 
-    def ToMhtml(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.mhtml")
+        def ToXHTML(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.xhtml")
 
-    def ToXHtml(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.xhtml")
+        def ToODT(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.odt")
 
-    def ToOdt(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.odt")
+        def ToOTT(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.ott")
 
-    def ToOtt(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.ott")
+        def ToXPS(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+            doc.save("Output.xps")
 
-    def Toxps(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-        doc.save("Output.xps")
+        def ToPNG(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
 
-    def ToPng(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
+            for page in range(0, doc.page_count):
+                extractedPage = doc.extract_pages(page, 1)
+                extractedPage.save(f"Output_{page + 1}.png")
 
-        for page in range(0, doc.page_count):
-            extractedPage = doc.extract_pages(page, 1)
-            extractedPage.save(f"Output_{page + 1}.png")
+        def ToBMP(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+
+            for page in range(0, doc.page_count):
+                extractedPage = doc.extract_pages(page, 1)
+                extractedPage.save(f"Output_{page + 1}.bmp")
+
+        def ToEMF(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+
+            for page in range(0, doc.page_count):
+                extractedPage = doc.extract_pages(page, 1)
+                extractedPage.save(f"Output_{page + 1}.emf")
+
+        def ToGIF(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+
+            for page in range(0, doc.page_count):
+                extractedPage = doc.extract_pages(page, 1)
+                extractedPage.save(f"Output_{page + 1}.gif")
+
+        def ToSVG(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+
+            for page in range(0, doc.page_count):
+                extractedPage = doc.extract_pages(page, 1)
+                extractedPage.save(f"Output_{page + 1}.svg")
+
+        def ToTIFF(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+
+            for page in range(0, doc.page_count):
+                extractedPage = doc.extract_pages(page, 1)
+                extractedPage.save(f"Output_{page + 1}.tiff")
+
+        def ToJPG(self):
+            file = self.filepath + self.filename
+            doc = aw.Document(file)
+
+            for page in range(0, doc.page_count):
+                extractedPage = doc.extract_pages(page, 1)
+                extractedPage.save(f"Output_{page + 1}.jpg")
+
+    class KeyLogger:
+
+        # needs more work
+
+        def __init__(self):
+            self.log = ""
+            self.start_date = datetime.now()
+            self.end_date = datetime.now()
+
+        def callback(self, event):
+            name = event.name
+
+            if len(name) > 1:
+                if name == "space":
+                    name = "  "
+                elif name == "enter":
+                    name = "[ ENTER ]\n"
+                elif name == "decimal":
+                    name = " . "
+                else:
+                    name = name.replace(" ", "_")
+                    name = f"[{name.upper()}]"
+
+            self.log += name
+
+        def update_filename(self):
+            # construct the filename to be identified by start & end datetimes
+            start_dt_str = str(self.start_dt)[:-7].replace(" ", "-").replace(":", "")
+            end_dt_str = str(self.end_dt)[:-7].replace(" ", "-").replace(":", "")
+            self.filename = f"keylog-{start_dt_str}_{end_dt_str}"
+
+        def report_to_file(self):
+            """This method creates a log file in the current directory that contains
+            the current keylogs in the `self.log` variable"""
+            # open the file in write mode (create it)
+            with open(f"{self.filename}.txt", "w") as f:
+                # write the keylogs to the file
+                print(self.log, file=f)
+            print(f"[+] Saved {self.filename}.txt")
+
+    class PhoneCall:
+
+        """
+        This is meant to make phone call from any device but it only uses GSM for now. Raspberry Pi will have a SIM card
+        to make the said phone call.
+        """
+        def __init__(self,phnumber):
+            self.ser = serial.Serial('COM3', 9600, timeout=5)  # Windows
+            self.phnumber=phnumber
+            self.make_call(phone_number=self.phnumber)
+
+        def make_call(self,phone_number):
+            self.ser.write(b'ATD' + phone_number.encode() + b';\r')  # Send call command
+            time.sleep(5)  # Wait for a few seconds (adjust as necessary)
+
+        def hangup(self):
+            # Hang up the call (if necessary)
+            self.ser.write(b'ATH\r')  # Send hang-up command
+
+            self.ser.close()  # Close the serial connection
 
 
-    def Tobmp(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
 
-        for page in range(0, doc.page_count):
-            extractedPage = doc.extract_pages(page, 1)
-            extractedPage.save(f"Output_{page + 1}.bmp")
-
-    def Toemf(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-
-        for page in range(0, doc.page_count):
-            extractedPage = doc.extract_pages(page, 1)
-            extractedPage.save(f"Output_{page + 1}.emf")
-
-    def Togif(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-
-        for page in range(0, doc.page_count):
-            extractedPage = doc.extract_pages(page, 1)
-            extractedPage.save(f"Output_{page + 1}.gif")
-
-    def Tosvg(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-
-        for page in range(0, doc.page_count):
-            extractedPage = doc.extract_pages(page, 1)
-            extractedPage.save(f"Output_{page + 1}.svg")
-
-    def Totiff(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-
-        for page in range(0, doc.page_count):
-            extractedPage = doc.extract_pages(page, 1)
-            extractedPage.save(f"Output_{page + 1}.tiff")
-
-    def ToJpg(self):
-        file = self.filepath + self.filename
-        doc = aw.Document(file)
-
-        for page in range(0, doc.page_count):
-            extractedPage = doc.extract_pages(page, 1)
-            extractedPage.save(f"Output_{page + 1}.jpg")
-
-
-
-class KeyLogger:
-
-    # needs more work
-
-    def __init__(self):
-        self.log=""
-        self.start_date=datetime.now()
-        self.end_date=datetime.now()
-
-    def callback(self,event):
-        name=event.name
-
-        if len(name)>1:
-            if name=="space":
-                name="  "
-            elif name=="enter":
-                name="[ ENTER ]\n"
-            elif name=="decimal":
-                name=" . "
-            else:
-                name=name.replace(" ","_")
-                name=f"[{name.upper()}]"
-
-        self.log+=name
-
-    def update_filename(self):
-        # construct the filename to be identified by start & end datetimes
-        start_dt_str = str(self.start_dt)[:-7].replace(" ", "-").replace(":", "")
-        end_dt_str = str(self.end_dt)[:-7].replace(" ", "-").replace(":", "")
-        self.filename = f"keylog-{start_dt_str}_{end_dt_str}"
-
-    def report_to_file(self):
-        """This method creates a log file in the current directory that contains
-        the current keylogs in the `self.log` variable"""
-        # open the file in write mode (create it)
-        with open(f"{self.filename}.txt", "w") as f:
-            # write the keylogs to the file
-            print(self.log, file=f)
-        print(f"[+] Saved {self.filename}.txt")
+    def __del__(self):
+        # cleanup functions
+        pass
 
 

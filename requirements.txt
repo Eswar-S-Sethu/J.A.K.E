@@ -14,7 +14,6 @@ folium
 ffmpeg
 pywin32
 openai
-openweather
 sinch
 mouse
 keyboard
@@ -30,3 +29,6 @@ pygame
 pywikihow
 geopy
 geocoder
+cryptography
+python-dotenv
+pyserial
