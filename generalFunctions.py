@@ -19,7 +19,6 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from datetime import datetime,timezone,date
-import newspaper as newspr
 import itertools,pyjokes,asyncio,keyboard,folium,requests,geocoder,nltk
 import pyautogui
 import aspose.words as aw
@@ -27,7 +26,6 @@ from geopy.geocoders import Nominatim
 from shazamio import Shazam
 import tkinter as tk
 import pygame,serial
-import spotipy
 from pywikihow import RandomHowTo,search_wikihow
 from sinch import SinchClient
 from dotenv import load_dotenv
@@ -148,9 +146,7 @@ class General:
         return My_joke
 
     def textToMorseCodeAndBack(inputValue):
-
-        # still needs work - come back later
-        morse_code_list = ["._", "_...", "_._.", "_..", ".", ".._.", "__.", "....", "..", ".___", "_._", "_..", "__",
+        morse_code_list = ["._", "_...", "_._.", "_..", ".", ".._.", "__.", "....", "..", ".___", "_._", "._..", "__",
                            "_.", "___",
                            ".__.", "__._", "._.", "...", "_", ".._", "..._", ".__", "_.._", "_.__", "__..", ".____",
                            "..___", "...__",
@@ -195,8 +191,6 @@ class General:
         return converted
 
     def binaryToTextAndBack(textOrBinary):
-        # needs to work on it
-        # probably needs work as i never tested it
         if set(textOrBinary).issubset({'0', '1'}):
             textOrBinary = textOrBinary[:len(textOrBinary) - (len(textOrBinary) % 8)]
 
