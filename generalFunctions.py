@@ -8,7 +8,7 @@
     automating keyboard shortcuts, controlling Wi-Fi and
     bluetooth, opening and closing apps, taking screenshots, recording sound, setting alarms and timers,
     mini-games, getting weather info, getting info from wikipedia-done, cracking a password-done, calculator,
-    wikiHow integration, morse and binary conversions- almost done, language translations'''
+    wikiHow integration, morse and binary conversions- done, language translations'''
 
 import wikipedia
 import os,sys,json
@@ -19,7 +19,7 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from datetime import datetime,timezone,date
-import itertools,pyjokes,asyncio,keyboard,folium,requests,geocoder,nltk
+import itertools,pyjokes,asyncio,keyboard,folium,requests,geocoder,nltk,smtplib
 import pyautogui
 import aspose.words as aw
 from geopy.geocoders import Nominatim
@@ -29,6 +29,7 @@ import pygame,serial
 from pywikihow import RandomHowTo,search_wikihow
 from sinch import SinchClient
 from dotenv import load_dotenv
+from gnews import GNews
 
 
 newsList={"AU":["https://www.news.com.au/","https://www.9news.com.au/","https://www.abc.net.au/news/australia"],
@@ -56,8 +57,17 @@ class General:
 
         asyncio.run(recognise_song(song))
 
-    def get_news(self,topgoogletrends=False,today=True,sportsnewsonly=False,currentCountry=False):
-        pass
+    def get_news(self):
+        gnews = GNews(language='en', country='AU')
+        top_news = gnews.get_top_news()
+        summaries = []
+        for article in top_news[:5]:
+            summaries.append({
+                'headline': article['title'],
+                'summary': article['description']
+            })
+        return summaries # returns a list
+
 
     def takeNote(self,note):
         now = datetime.now()

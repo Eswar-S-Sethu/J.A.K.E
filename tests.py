@@ -1,24 +1,42 @@
-from gnews import GNews
+import base64
+from email.message import EmailMessage
 
-# Initialize GNews with the desired language and country
-gnews = GNews(language='en', country='AU')
+import google.auth
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
-# Fetch the top news articles
-top_news = gnews.get_top_news()
 
-# Prepare a list for the headlines and summaries
-summaries = []
+def gmail_send_message(sendTo="",msg="",sendFrom="",heading=""):
 
-# Get the first 5 articles
-for article in top_news[:5]:
-    summaries.append({
-        'headline': article['title'],
-        'summary': article['description']
-    })
+  creds, _ = google.auth.default()
 
-# Print the summaries
-for i, item in enumerate(summaries, 1):
-    print(f"Article {i}:")
-    print(f"Headline: {item['headline']}")
-    print(f"Summary: {item['summary']}")
-    print()
+  try:
+    service = build("gmail", "v1", credentials=creds)
+    message = EmailMessage()
+
+    message.set_content(heading)
+
+    message[sendTo] = "gduser1@workspacesamples.dev"
+    message[sendFrom] = "gduser2@workspacesamples.dev"
+    message[msg] = "Automated draft"
+
+    # encoded message
+    encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
+
+    create_message = {"raw": encoded_message}
+    # pylint: disable=E1101
+    send_message = (
+        service.users()
+        .messages()
+        .send(userId="me", body=create_message)
+        .execute()
+    )
+    print(f'Message Id: {send_message["id"]}')
+  except HttpError as error:
+    print(f"An error occurred: {error}")
+    send_message = None
+  return send_message
+
+
+if __name__ == "__main__":
+  gmail_send_message()
