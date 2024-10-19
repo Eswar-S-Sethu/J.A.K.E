@@ -20,6 +20,7 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from datetime import datetime,timezone,date
 import itertools,pyjokes,asyncio,keyboard,folium,requests,geocoder,nltk,smtplib
+from itertools import product
 import pyautogui
 import aspose.words as aw
 from geopy.geocoders import Nominatim
@@ -217,30 +218,20 @@ class General:
             if name in files:
                 return os.path.join(root, name)
 
-    def passwordCracker(self):  # need to work more on it
-        chars = string.printable
+    def brute_force_pin_combination(target_pin):
+        """Brute-force the target PIN by generating and checking all possible combinations."""
+        pin_length = len(target_pin)  # Automatically determine the PIN length
+        for pin_tuple in product("0123456789", repeat=pin_length):
+            generated_pin = ''.join(pin_tuple)  # Form the PIN string
 
-        # Define the password to be cracked
-        password = "echu"  # make a guess based on the minimum length of passwords
-        max_length = len(password)
-        start_time = time.time()
+            print(f'Trying PIN: {generated_pin}')
 
-        # Try all possible combinations of characters up to max_length
-        for length in range(1, max_length + 1):
-            for combination in itertools.product(chars, repeat=length):
-                # Join the characters in the combination to form a password candidate
-                candidate = "".join(combination)
-                print("Trying password:", candidate)
-                # Check if the candidate matches the password
-                if candidate == password:
-                    # Track the end time of the password cracking process
-                    end_time = time.time()
-                    print("Password found:", candidate)
-                    # Calculate the time taken to crack the password
-                    time_taken = end_time - start_time
-                    print("Time taken:", time_taken, "seconds")
-                    # Terminate the password cracking process
-                    raise SystemExit
+            if generated_pin == target_pin:  # Check if the generated PIN matches the target
+                print(f'Success! The PIN is: {generated_pin}')
+                return generated_pin
+
+        print('Failed to find the PIN within the specified length.')
+        return None
 
     def getDateAndTime(timeOnly, singleDigit=False):
         if timeOnly:
@@ -444,67 +435,8 @@ class General:
                 extractedPage = doc.extract_pages(page, 1)
                 extractedPage.save(f"Output_{page + 1}.jpg")
 
-    class KeyLogger:
 
-        # needs more work
-
-        def __init__(self):
-            self.log = ""
-            self.start_date = datetime.now()
-            self.end_date = datetime.now()
-
-        def callback(self, event):
-            name = event.name
-
-            if len(name) > 1:
-                if name == "space":
-                    name = "  "
-                elif name == "enter":
-                    name = "[ ENTER ]\n"
-                elif name == "decimal":
-                    name = " . "
-                else:
-                    name = name.replace(" ", "_")
-                    name = f"[{name.upper()}]"
-
-            self.log += name
-
-        def update_filename(self):
-            # construct the filename to be identified by start & end datetimes
-            start_dt_str = str(self.start_dt)[:-7].replace(" ", "-").replace(":", "")
-            end_dt_str = str(self.end_dt)[:-7].replace(" ", "-").replace(":", "")
-            self.filename = f"keylog-{start_dt_str}_{end_dt_str}"
-
-        def report_to_file(self):
-            """This method creates a log file in the current directory that contains
-            the current keylogs in the `self.log` variable"""
-            # open the file in write mode (create it)
-            with open(f"{self.filename}.txt", "w") as f:
-                # write the keylogs to the file
-                print(self.log, file=f)
-            print(f"[+] Saved {self.filename}.txt")
-
-    class PhoneCall:
-
-        """
-        This is meant to make phone call from any device but it only uses GSM for now. Raspberry Pi will have a SIM card
-        to make the said phone call.
-        """
-        def __init__(self,phnumber):
-            self.ser = serial.Serial('COM3', 9600, timeout=5)  # Windows
-            self.phnumber=phnumber
-            self.make_call(phone_number=self.phnumber)
-
-        def make_call(self,phone_number):
-            self.ser.write(b'ATD' + phone_number.encode() + b';\r')  # Send call command
-            time.sleep(5)  # Wait for a few seconds (adjust as necessary)
-
-        def hangup(self):
-            # Hang up the call (if necessary)
-            self.ser.write(b'ATH\r')  # Send hang-up command
-
-            self.ser.close()  # Close the serial connection
-
+    # more functions will be added later
 
 
     def __del__(self):

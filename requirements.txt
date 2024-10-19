@@ -17,6 +17,7 @@ openai
 sinch
 mouse
 keyboard
+pynput
 pyautogui
 shazamio
 newspaper3k
