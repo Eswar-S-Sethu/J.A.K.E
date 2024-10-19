@@ -26,7 +26,7 @@ import aspose.words as aw
 from geopy.geocoders import Nominatim
 from shazamio import Shazam
 import tkinter as tk
-import pygame,serial
+import pygame,serial,cv2
 from pywikihow import RandomHowTo,search_wikihow
 from sinch import SinchClient
 from dotenv import load_dotenv
@@ -277,10 +277,22 @@ class General:
         return how_tos[0].print()
 
     def openAWindow(self,dimensionX,dimensionY):
+        # needs more work
         window=tk.Tk()
         window.title("Info Screen")
         window.geometry(dimensionX+"x"+dimensionY)
         window.mainloop()
+
+    def blurAnImage(self,imagename=None):
+        imagename=self.searchAFile()
+        try:
+            image = cv2.imread('image.jpg')
+            blurred = cv2.GaussianBlur(image, (15, 15), 0)
+            cv2.imwrite('blurred.jpg', blurred)
+            return "Done"
+        except Exception:
+            return "No can do"
+
 
     class FormatFactory:
         # need to work on this further
